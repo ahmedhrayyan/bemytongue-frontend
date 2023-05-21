@@ -14,19 +14,35 @@ function App() {
     const video = videoRef.current as HTMLVideoElement;
     let intervalId: number;
     navigator.mediaDevices
-      .getUserMedia({ video: true })
+      .getUserMedia({
+        audio: false,
+        video: {
+          width: { min: 640, ideal: 1280, max: 1920 },
+          height: { min: 480, ideal: 720, max: 1080 },
+        },
+      })
       .then(async (stream) => {
         video.srcObject = stream;
         await video.play();
         const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        canvas.width = 256;
+        canvas.height = 256;
         const ctx = canvas.getContext("2d");
         intervalId = window.setInterval(() => {
-          ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+          ctx?.drawImage(
+            video,
+            0,
+            0,
+            video.videoWidth,
+            video.videoHeight,
+            0,
+            0,
+            256,
+            256
+          );
           canvas.toBlob((blob) => {
             if (blob) socket.emit("frame", blob);
-          });
+          }, "image/webp");
         }, 1000 / 8);
       })
       .catch((err) => console.error(err));
