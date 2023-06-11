@@ -12,6 +12,13 @@ export default function SignDetection() {
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }], // Google's public STUN server
     });
 
+    pc.addEventListener("connectionstatechange", () => {
+      if (pc.connectionState === "failed") {
+        stop();
+        alert("Connection failed, please try again later.");
+      }
+    });
+
     // handle incoming video track
     pc.addEventListener("track", (event) => {
       if (event.track.kind === "video" && videoRef.current) {
@@ -55,10 +62,7 @@ export default function SignDetection() {
     try {
       pcRef.current = await createPeerConnection();
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { min: 640, ideal: 1280, max: 1920 },
-          height: { min: 480, ideal: 720, max: 1080 },
-        },
+        video: { width: 1280, height: 720, frameRate: 8 },
       });
       stream
         .getTracks()
