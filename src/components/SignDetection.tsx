@@ -1,5 +1,5 @@
+import { Box, Button, HStack } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import * as classNames from "classnames";
 import axiosInstance from "../utils/axios.ts";
 
 export default function SignDetection() {
@@ -75,22 +75,24 @@ export default function SignDetection() {
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="font-bold text-4xl text-center mb-5">كن لساني</h1>
-      <div className="flex justify-center gap-1 mb-10">
-        <button className="btn btn-sky" disabled={isPlaying} onClick={start}>
+    <Box>
+      <HStack justify="center">
+        <Button onClick={start} isDisabled={isPlaying}>
           ابدأ
-        </button>
-        <button className="btn btn-rose" disabled={!isPlaying} onClick={stop}>
-          أوقف
-        </button>
-      </div>
-      <video
+        </Button>
+        <Button onClick={stop} isDisabled={!isPlaying} colorScheme="red">
+          اوقف
+        </Button>
+      </HStack>
+      <Box
+        as="video"
         ref={videoRef}
-        className={classNames("h-full w-full", { hidden: !isPlaying })}
+        w="full"
+        h="full"
+        display={isPlaying ? "block" : "none"}
         autoPlay
         playsInline
       />
-    </div>
+    </Box>
   );
 }
