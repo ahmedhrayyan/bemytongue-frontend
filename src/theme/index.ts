@@ -5,9 +5,10 @@ import { foundations } from "./foundations";
 
 export const theme = extendTheme(
   {
+    direction: "rtl",
     ...foundations,
     styles,
     components,
   },
-  withDefaultColorScheme({ colorScheme: "blue" })
+  withDefaultColorScheme({ colorScheme: "teal" })
 );

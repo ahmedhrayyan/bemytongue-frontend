@@ -1,6 +1,6 @@
 const typography = {
   fonts: {
-    heading: `'Gulzar', serif`,
+    heading: `'Kufam', sans-serif;`,
     body: `'Cairo', sans-serif`,
   },
 };

@@ -1,11 +1,18 @@
 import { Box, Button, HStack } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../utils/axios.ts";
+import useConfig from "../hooks/useConfig.ts";
 
-export default function SignDetection() {
+export default function SignDetectionSession() {
+  const { language } = useConfig();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
+
+  useEffect(() => {
+    stop();
+  }, [language]);
 
   function createPeerConnection() {
     const pc = new RTCPeerConnection({
@@ -22,6 +29,7 @@ export default function SignDetection() {
     // handle incoming video track
     pc.addEventListener("track", (event) => {
       if (event.track.kind === "video" && videoRef.current) {
+        videoRef.current.style.display = "block";
         videoRef.current.srcObject = event.streams[0];
       }
     });
@@ -44,6 +52,7 @@ export default function SignDetection() {
 
   function stop() {
     setIsPlaying(false);
+    if (videoRef.current) videoRef.current.style.display = "none";
 
     // close transceivers
     pcRef.current
@@ -59,6 +68,7 @@ export default function SignDetection() {
 
   async function start() {
     setIsPlaying(true);
+    setIsLoading(true);
     try {
       pcRef.current = await createPeerConnection();
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -71,17 +81,23 @@ export default function SignDetection() {
     } catch (err) {
       stop();
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
     <Box>
       <HStack justify="center">
-        <Button onClick={start} isDisabled={isPlaying}>
-          ابدأ
+        <Button onClick={start} isDisabled={isPlaying} isLoading={isLoading}>
+          جلسة جديدة
         </Button>
-        <Button onClick={stop} isDisabled={!isPlaying} colorScheme="red">
-          اوقف
+        <Button
+          onClick={stop}
+          isDisabled={!isPlaying || isLoading}
+          colorScheme="red"
+        >
+          إنهاء الجلسة
         </Button>
       </HStack>
       <Box
@@ -89,7 +105,9 @@ export default function SignDetection() {
         ref={videoRef}
         w="full"
         h="full"
-        display={isPlaying ? "block" : "none"}
+        display="none"
+        mt="6"
+        borderRadius="5"
         autoPlay
         playsInline
       />
