@@ -62,7 +62,7 @@ export default function SignDetection() {
     try {
       pcRef.current = await createPeerConnection();
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720, frameRate: 8 },
+        video: { width: 1280, height: 720, frameRate: 15 },
       });
       stream
         .getTracks()
