@@ -6,7 +6,7 @@ interface PageProps extends BoxProps {
 }
 export default function Page({ docTitle, ...rest }: PageProps) {
   useEffect(() => {
-    document.title = docTitle;
+    document.title = `كن لساني - ${docTitle}`;
   }, [docTitle]);
 
   return <Box {...rest} />;

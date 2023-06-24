@@ -22,6 +22,8 @@ export default function SignDetection() {
           يمكنك تغيير اللغة اعلاه مع ملاحظة ان ذلك سيؤدي إلى اغلاق الجلسة
           الحالية.
         </Text>
+      </Container>
+      <Container maxW="container.md">
         <SignDetectionSession />
       </Container>
     </Page>

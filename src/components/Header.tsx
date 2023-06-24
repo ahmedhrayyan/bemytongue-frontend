@@ -20,7 +20,7 @@ export default function Header() {
         fontSize="2xl"
         fontWeight="bold"
         textAlign="center"
-        py="2.5"
+        py="3"
       >
         كن لساني
       </Text>
@@ -40,20 +40,21 @@ export default function Header() {
               ".chakra-link": {
                 display: "inline-flex",
                 alignItems: "center",
-                py: 6,
+                py: { base: 5, md: 6 },
                 px: { base: 2, sm: 2.5 },
                 fontSize: { base: "sm", sm: "md" },
                 color: "gray.600",
                 transitionProperty: "colors",
                 transitionDuration: "fast",
+                "-webkit-tap-highlight-color": "rgba(255, 255, 255, 0)",
                 _hover: { textDecor: "none", color: "chakra-body-text" },
               },
               // active style
               ".chakra-link.active": {
                 fontWeight: "semibold",
-                color: "chakra-body-text",
+                color: "teal.600",
                 position: "relative",
-                bgColor: "#e6fffa85",
+                bgColor: "#e6fffa75",
                 _after: {
                   content: `""`,
                   position: "absolute",

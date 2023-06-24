@@ -1,7 +1,7 @@
 import { Box, Button, HStack } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-import axiosInstance from "../utils/axios.ts";
 import useConfig from "../hooks/useConfig.ts";
+import rtcApi from "../api/rtcApi.ts";
 
 export default function SignDetectionSession() {
   const { language } = useConfig();
@@ -43,11 +43,8 @@ export default function SignDetectionSession() {
     const offer = await pcRef.current.createOffer();
     await pcRef.current.setLocalDescription(offer);
 
-    const response = await axiosInstance.post<null, RTCSessionDescription>(
-      "/offer",
-      offer
-    );
-    await pcRef.current.setRemoteDescription(response);
+    const answer = await rtcApi.submitOffer(offer);
+    await pcRef.current.setRemoteDescription(answer);
   }
 
   function stop() {
@@ -72,7 +69,7 @@ export default function SignDetectionSession() {
     try {
       pcRef.current = await createPeerConnection();
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720, frameRate: 15 },
+        video: { width: 720, height: 1280, frameRate: 15 },
       });
       stream
         .getTracks()
@@ -107,7 +104,7 @@ export default function SignDetectionSession() {
         h="full"
         display="none"
         mt="6"
-        borderRadius="5"
+        borderRadius="lg"
         autoPlay
         playsInline
       />
