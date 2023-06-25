@@ -34,9 +34,8 @@ export default function Chat() {
     onSuccess,
     onError,
   });
-  const audioToSignMutation = useMutation(textSignApi.textToSign, {
+  const audioToSignMutation = useMutation(textSignApi.audioToSign, {
     onSuccess,
-    onError,
   });
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -54,8 +53,16 @@ export default function Chat() {
     e.currentTarget.reset();
   }
 
-  function onRecordAvailable(file: File) {
-    console.log(file);
+  function onRecordAvailable(audio: File) {
+    setShowRecorder(false);
+    const id = uniqueId();
+    onMessageAdd({
+      id,
+      isMine: true,
+      type: "audio",
+      content: audio,
+    });
+    audioToSignMutation.mutate({ id, audio, language });
   }
 
   useEffect(() => {
@@ -121,7 +128,14 @@ export default function Chat() {
               </HStack>
             </form>
           )}
-          {showRecorder && <AudioRecorder onChange={onRecordAvailable} />}
+          {showRecorder && (
+            <AudioRecorder
+              onChange={onRecordAvailable}
+              onDelete={() => {
+                setShowRecorder(false);
+              }}
+            />
+          )}
         </Box>
       </Box>
     </AspectRatio>

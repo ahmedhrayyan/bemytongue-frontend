@@ -10,13 +10,13 @@ const textToSign = (data: {
 
 const audioToSign = (data: {
   id: string;
-  audio: File;
+  audio: File | Blob;
   language: "ar" | "en";
 }) => {
   const formData = new FormData();
   formData.append("audio", data.audio);
   formData.append("language", data.language);
-  return axiosInstance.post<null, { url: string }>("/text-to-sign", formData);
+  return axiosInstance.post<null, { url: string }>("/audio-to-sign", formData);
 };
 
 const textSignApi = {

@@ -7,9 +7,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { isValidMotionProp, motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatSecondsDuration } from "../utils/date";
-import { Mic, Send, Trash, } from "./CustomIcons";
+import { Send, Trash } from "./CustomIcons";
 
 const ChakraBox = chakra(motion.div, {
   /**
@@ -34,14 +34,17 @@ async function createMediaRecorder() {
 
 interface Props {
   onChange: (file: File) => void;
+  onDelete: () => void;
   maxDuration?: number; // in seconds
 }
 
 export default function AudioRecorder({
   onChange,
+  onDelete,
   maxDuration = 1 * 60,
 }: Props) {
   const mediaRecorderRef = useRef<MediaRecorder>();
+  const ignoreRecording = useRef<boolean>();
   const [isRecording, setIsRecording] = useState(false);
   const [duration, setDuration] = useState<number>(0);
 
@@ -73,14 +76,24 @@ export default function AudioRecorder({
       });
       mediaRecorder.addEventListener("stop", () => {
         clearInterval(durationInterval); // stop updating the duration
-        // create the recording file and upload it
-        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-        const file = new File([audioBlob], "audio.webm");
-        onChange(file);
-        setIsRecording(false);
+        if (ignoreRecording.current) ignoreRecording.current = false; // reset
+        else {
+          // create the recording file and upload it
+          const audioBlob = new Blob(audioChunks, {
+            type: "audio/webm",
+          });
+          const file = new File([audioBlob], "audio.webm");
+          onChange(file);
+          setIsRecording(false);
+        }
       });
     }
   }
+
+  useEffect(() => {
+    // start recording on mount
+    startRecording();
+  }, []);
 
   function stopRecording() {
     mediaRecorderRef.current?.stop();
@@ -91,54 +104,60 @@ export default function AudioRecorder({
 
   return (
     <Box>
-      <HStack dir="ltr" px="4" py="3" borderRadius="lg" bgColor="gray.100" borderBottom="1px solid" borderColor="gray.200">
-        <>
-          {!isRecording && (
-            <IconButton
-              aria-label="Start recording"
-              icon={<Mic />}
-              onClick={startRecording}
-              variant="link"
-              minW="auto"
-              px="2.5"
-            />
-          )}
-          {isRecording && (
-            <IconButton
-              aria-label="Delete recording"
-              colorScheme="red"
-              icon={
-                <ChakraBox
-                  lineHeight="0"
-                  animate={{
-                    opacity: [1, 0.25, 1],
-                  }}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  transition={{
-                    duration: 2,
-                    ease: "easeInOut",
-                    repeat: Infinity,
-                    repeatType: "loop",
-                  }}
-                >
-                  <Trash />
-                </ChakraBox>
-              }
-              onClick={stopRecording}
-              variant="link"
-              minW="auto"
-              px="2.5"
-            />
-          )}
-          <Box flexGrow="1" />
-          <Text color="gray.500" pe="1.5" fontWeight="bold" fontSize="sm">
-            <Text as="span" color="chakra-body-text">
-              {formatSecondsDuration(duration)}
-            </Text>
-            &nbsp;/&nbsp;{formatSecondsDuration(maxDuration)}
+      <HStack
+        dir="ltr"
+        px="4"
+        py="3"
+        borderRadius="lg"
+        bgColor="gray.100"
+        borderBottom="1px solid"
+        borderColor="gray.200"
+      >
+        <IconButton
+          aria-label="Stop recording"
+          icon={<Send />}
+          onClick={stopRecording}
+          variant="link"
+          minW="auto"
+          px="2.5"
+        />
+        <IconButton
+          aria-label="Delete recording"
+          colorScheme="red"
+          icon={
+            <ChakraBox
+              lineHeight="0"
+              animate={{
+                opacity: [1, 0.25, 1],
+              }}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              transition={{
+                duration: 2,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "loop",
+              }}
+            >
+              <Trash />
+            </ChakraBox>
+          }
+          onClick={() => {
+            ignoreRecording.current = true;
+            onDelete();
+            stopRecording();
+          }}
+          variant="link"
+          minW="auto"
+          px="2.5"
+        />
+        <Box flexGrow="1" />
+        <Text color="gray.500" pe="1.5" fontWeight="bold" fontSize="sm">
+          <Text as="span" color="chakra-body-text">
+            {formatSecondsDuration(duration)}
           </Text>
-        </>
+          &nbsp;/&nbsp;{formatSecondsDuration(maxDuration)}
+        </Text>
       </HStack>
     </Box>
   );

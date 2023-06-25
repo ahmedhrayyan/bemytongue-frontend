@@ -1,8 +1,8 @@
+import { Box, HStack, IconButton, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
-import { Box, IconButton, Text } from "@chakra-ui/react";
-import { Pause, Play } from "./CustomIcons";
 import { formatSecondsDuration } from "../utils/date";
+import { Pause, Play } from "./CustomIcons";
 
 export default function AudioPlayer({ audio }: { audio: File | string }) {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -14,8 +14,8 @@ export default function AudioPlayer({ audio }: { audio: File | string }) {
   useEffect(() => {
     wavesurferRef.current = WaveSurfer.create({
       container: waveContainerRef.current as HTMLElement,
-      waveColor: "#D4D4D4",
-      progressColor: "#2E653C",
+      waveColor: "#D4D4D8",
+      progressColor: "#F4F4F5",
       cursorColor: "#F2A431",
       barWidth: 2,
       barRadius: 1,
@@ -53,21 +53,22 @@ export default function AudioPlayer({ audio }: { audio: File | string }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
+    <HStack flexDir="row-reverse" minW="20rem">
       <IconButton
         aria-label={isPlaying ? "Pause" : "Play"}
+        me="-1"
         icon={isPlaying ? <Pause /> : <Play />}
         onClick={() => wavesurferRef.current?.playPause()}
         colorScheme="secondary"
       />
       <Box flexGrow="1" ref={waveContainerRef} />
-      <Text color="gray.500" pe="1.5" fontWeight="bold" fontSize="sm">
-        <Text as="span" color="chakra-body-text">
+      <Text color="gray.100" pe="1.5" fontWeight="bold" fontSize="sm">
+        {formatSecondsDuration(duration)}
+        &nbsp;/&nbsp;
+        <Text as="span" color="gray.200">
           {formatSecondsDuration(timeElapsed)}
         </Text>
-        &nbsp;/&nbsp;
-        {formatSecondsDuration(duration)}
       </Text>
-    </>
+    </HStack>
   );
 }
