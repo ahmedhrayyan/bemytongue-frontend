@@ -17,7 +17,8 @@ const initialState: State = {
 
 interface Context extends State {
   onMessageAdd: (message: ChatMessageItem) => void;
-  onMessageDelete: (messageId: ChatMessageItem['id']) => void;
+  onMessageDelete: (messageId: ChatMessageItem["id"]) => void;
+  onReset: () => void;
 }
 
 export const ChatContext = createContext<Context>({
@@ -27,6 +28,9 @@ export const ChatContext = createContext<Context>({
     // do nothing
   },
   onMessageDelete: () => {
+    // do nothing
+  },
+  onReset: () => {
     // do nothing
   },
 });
@@ -45,13 +49,15 @@ export default function ChatProvider({ children }: { children: ReactNode }) {
     [setMessages]
   );
 
+  const onReset = useCallback(() => setMessages([]), [setMessages]);
 
   return (
     <ChatContext.Provider
       value={{
         messages,
         onMessageAdd,
-        onMessageDelete
+        onMessageDelete,
+        onReset,
       }}
     >
       {children}

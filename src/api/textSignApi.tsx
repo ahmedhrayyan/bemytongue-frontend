@@ -1,10 +1,18 @@
 import axiosInstance from ".";
 
-const textToSign = (data: { text: string; language: "ar" | "en" }) => {
+const textToSign = (data: {
+  id: string;
+  text: string;
+  language: "ar" | "en";
+}) => {
   return axiosInstance.post<null, { url: string }>("/text-to-sign", data);
 };
 
-const audioToSign = (data: { audio: File; language: "ar" | "en" }) => {
+const audioToSign = (data: {
+  id: string;
+  audio: File;
+  language: "ar" | "en";
+}) => {
   const formData = new FormData();
   formData.append("audio", data.audio);
   formData.append("language", data.language);

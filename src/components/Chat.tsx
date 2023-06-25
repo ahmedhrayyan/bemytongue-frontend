@@ -1,18 +1,22 @@
-import { FormEvent, useState } from "react";
-import { AspectRatio, Box, VStack } from "@chakra-ui/react";
+import { AspectRatio, Box, HStack, IconButton, VStack } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { uniqueId } from "lodash-es";
-import ChatInput from "./ChatInput";
-import AudioRecorder from "./AudioRecorder";
-import useChat from "../hooks/useChat";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { BeatLoader } from "react-spinners";
 import textSignApi from "../api/textSignApi";
+import useChat from "../hooks/useChat";
 import useConfig from "../hooks/useConfig";
+import AudioRecorder from "./AudioRecorder";
+import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
+import { Trash } from "./CustomIcons";
 
 export default function Chat() {
+  const listRef = useRef<HTMLUListElement>(null);
+
   const [showRecorder, setShowRecorder] = useState(false);
   const { language } = useConfig();
-  const { messages, onMessageAdd } = useChat();
+  const { messages, onMessageAdd, onMessageDelete, onReset } = useChat();
   function onSuccess({ url }: { url: string }) {
     onMessageAdd({
       id: uniqueId(),
@@ -22,9 +26,17 @@ export default function Chat() {
     });
   }
 
-  const textToSignMutation = useMutation(textSignApi.textToSign, { onSuccess });
+  function onError(_: unknown, { id }: { id: string }) {
+    onMessageDelete(id);
+  }
+
+  const textToSignMutation = useMutation(textSignApi.textToSign, {
+    onSuccess,
+    onError,
+  });
   const audioToSignMutation = useMutation(textSignApi.textToSign, {
     onSuccess,
+    onError,
   });
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -38,12 +50,19 @@ export default function Chat() {
       type: "text",
       content: text,
     });
-    textToSignMutation.mutate({ text, language });
+    textToSignMutation.mutate({ id, text, language });
+    e.currentTarget.reset();
   }
 
   function onRecordAvailable(file: File) {
     console.log(file);
   }
+
+  useEffect(() => {
+    window.setTimeout(() => {
+      listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
+    }, 50);
+  }, [messages]);
 
   return (
     <AspectRatio
@@ -63,11 +82,13 @@ export default function Chat() {
         justifyContent="flex-end !important"
       >
         <VStack
+          ref={listRef}
           as="ul"
           w="full"
           textAlign="start"
           align="start"
-          mb="3"
+          mb="4"
+          spacing="3"
           flexGrow="1"
           sx={{
             overflowY: "auto",
@@ -81,11 +102,23 @@ export default function Chat() {
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
+          {(textToSignMutation.isLoading || audioToSignMutation.isLoading) && (
+            <BeatLoader size="12" style={{ alignSelf: "flex-end" }} />
+          )}
         </VStack>
         <Box w="full">
           {!showRecorder && (
             <form onSubmit={onSubmit}>
-              <ChatInput onRecord={() => setShowRecorder(true)} />
+              <HStack align="stretch">
+                <IconButton
+                  aria-label="test"
+                  minW="12"
+                  h="auto"
+                  icon={<Trash />}
+                  onClick={onReset}
+                />
+                <ChatInput onRecord={() => setShowRecorder(true)} />
+              </HStack>
             </form>
           )}
           {showRecorder && <AudioRecorder onChange={onRecordAvailable} />}

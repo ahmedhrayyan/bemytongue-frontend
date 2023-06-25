@@ -1,4 +1,4 @@
-import { AspectRatio, Box, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { ChatMessageItem } from "../contexts/ChatContext";
 import AudioPlayer from "./AudioPlayer";
 
@@ -11,8 +11,8 @@ export default function ChatMessage({
   return (
     <Box
       minW="8rem"
-      maxW="60%"
-      p="3"
+      maxW="70%"
+      p={{ base: 2.5, md: 3 }}
       bgColor={isMine ? "teal.500" : "gray.100"}
       color="white"
       borderRadius="lg"
@@ -22,7 +22,15 @@ export default function ChatMessage({
     >
       {type === "text" && <Text>{content as string}</Text>}
       {type === "audio" && <AudioPlayer audio={content} />}
-      {type === "video" && <Box as="video" borderRadius="lg" src={content as string} autoPlay controls />}
+      {type === "video" && (
+        <Box
+          as="video"
+          borderRadius="lg"
+          src={content as string}
+          autoPlay
+          controls
+        />
+      )}
     </Box>
   );
 }
