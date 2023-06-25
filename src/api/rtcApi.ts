@@ -1,11 +1,14 @@
 import axiosInstance from ".";
 
-async function submitOffer(offer: RTCSessionDescriptionInit) {
-  return axiosInstance.post<null, RTCSessionDescription>("/offer", offer);
+async function submitOffer(data: {
+  offer: RTCSessionDescriptionInit;
+  language?: string;
+}) {
+  return axiosInstance.post<null, RTCSessionDescription>("/offer", data);
 }
 
 const rtcApi = {
   submitOffer,
-}
+};
 
 export default rtcApi;

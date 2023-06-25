@@ -43,7 +43,7 @@ export default function SignDetectionSession() {
     const offer = await pcRef.current.createOffer();
     await pcRef.current.setLocalDescription(offer);
 
-    const answer = await rtcApi.submitOffer(offer);
+    const answer = await rtcApi.submitOffer({ offer, language });
     await pcRef.current.setRemoteDescription(answer);
   }
 
