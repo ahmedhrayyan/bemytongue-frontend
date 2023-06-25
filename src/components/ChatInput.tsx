@@ -10,7 +10,7 @@ interface Props {
   onRecord: () => void;
 }
 
-export default function ChatInput({onRecord}: Props) {
+export default function ChatInput({ onRecord }: Props) {
   return (
     <InputGroup size="lg" variant="flushed">
       <Input
@@ -22,9 +22,10 @@ export default function ChatInput({onRecord}: Props) {
         ps="4"
         pl="5rem"
       />
-      <InputRightElement width="5rem">
+      <InputRightElement width="3rem">
         <IconButton
-        onClick={onRecord}
+          display="none"
+          onClick={onRecord}
           variant="link"
           aria-label="Attach file"
           icon={<Mic />}
