@@ -48,6 +48,7 @@ export default function Chat() {
   });
   const audioToSignMutation = useMutation(textSignApi.audioToSign, {
     onSuccess,
+    onError
   });
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
