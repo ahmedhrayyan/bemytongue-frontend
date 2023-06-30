@@ -22,7 +22,7 @@ export default function ChatMessage({
       px={{ base: 2.5, md: 3 }}
       py={{ base: 1, md: 2 }}
       bgColor={isMine ? "teal.500" : "gray.100"}
-      color="white"
+      color={isMine ? "white" : "chakra-body-text"}
       borderRadius="lg"
       borderBottomStartRadius={isMine ? 0 : undefined}
       borderTopEndRadius={!isMine ? 0 : undefined}

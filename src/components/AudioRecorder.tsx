@@ -93,7 +93,7 @@ export default function AudioRecorder({
   useEffect(() => {
     // start recording on mount
     startRecording();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function stopRecording() {
     mediaRecorderRef.current?.stop();

@@ -2,20 +2,20 @@ import axiosInstance from ".";
 
 const textToSign = (data: {
   id: string;
-  text: string;
   language: "ar" | "en";
+  text: string;
 }) => {
   return axiosInstance.post<null, { url: string }>("/text-to-sign", data);
 };
 
 const audioToSign = (data: {
   id: string;
-  audio: File | Blob;
   language: "ar" | "en";
+  audio: File | Blob;
 }) => {
   const formData = new FormData();
-  formData.append("audio", data.audio);
   formData.append("language", data.language);
+  formData.append("audio", data.audio);
   return axiosInstance.post<null, { url: string, text: string }>("/audio-to-sign", formData);
 };
 

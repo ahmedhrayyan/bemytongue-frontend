@@ -5,12 +5,14 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import { Mic, Send } from "./CustomIcons";
+import useConfig from "../hooks/useConfig";
 
 interface Props {
   onRecord: () => void;
 }
 
 export default function ChatInput({ onRecord }: Props) {
+  const { language } = useConfig();
   return (
     <InputGroup size="lg" variant="flushed">
       <Input
@@ -21,10 +23,10 @@ export default function ChatInput({ onRecord }: Props) {
         bgColor="gray.100"
         ps="4"
         pl="5rem"
+        lang={language}
       />
-      <InputRightElement width="3rem">
+      <InputRightElement width="5rem">
         <IconButton
-          display="none"
           onClick={onRecord}
           variant="link"
           aria-label="Attach file"
