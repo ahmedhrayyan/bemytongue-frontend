@@ -24,7 +24,7 @@ export default function Header() {
       >
         كن لساني
       </Text>
-      <Container as={HStack} justify="space-between">
+      <Container display="flex" alignItems="center" justifyContent="space-between">
         <Flex gap="6" align="center">
           <Text
             display={{ base: "none", md: "block" }}
@@ -75,7 +75,7 @@ export default function Header() {
             </Link>
           </Flex>
         </Flex>
-        <HStack>
+        <HStack spacing="1">
           <Text fontSize="sm" color="gray.600">
             عربي
           </Text>
