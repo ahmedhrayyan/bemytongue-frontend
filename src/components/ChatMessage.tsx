@@ -1,13 +1,20 @@
 import { Box, Text } from "@chakra-ui/react";
 import { ChatMessageItem } from "../contexts/ChatContext";
 import AudioPlayer from "./AudioPlayer";
+import useChat from "../hooks/useChat";
 
 interface ChatMessageProps {
   message: ChatMessageItem;
+  shouldAutoPlay?: boolean;
+  onLoadedMetadata?: () => void;
 }
 export default function ChatMessage({
-  message: { content, type, isMine },
+  message: { id, content, type, isMine },
+  shouldAutoPlay,
+  onLoadedMetadata,
 }: ChatMessageProps) {
+  const { latestVideoId } = useChat();
+
   return (
     <Box
       minW="8rem"
@@ -28,7 +35,8 @@ export default function ChatMessage({
           as="video"
           borderRadius="lg"
           src={content as string}
-          autoPlay
+          autoPlay={shouldAutoPlay}
+          onLoadedMetadata={latestVideoId === id ? onLoadedMetadata : undefined}
           controls
         />
       )}

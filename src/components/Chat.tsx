@@ -13,17 +13,29 @@ import { Trash } from "./CustomIcons";
 
 export default function Chat() {
   const listRef = useRef<HTMLUListElement>(null);
+  const latestVideoId = useRef<string | null>(null);
 
   const [showRecorder, setShowRecorder] = useState(false);
   const { language } = useConfig();
   const { messages, onMessageAdd, onMessageDelete, onReset } = useChat();
-  function onSuccess({ url }: { url: string }) {
+  function onSuccess({ url, text }: { url: string; text?: string }) {
+    if (text) {
+      onMessageAdd({
+        id: uniqueId(),
+        isMine: false,
+        type: "text",
+        content: text,
+      });
+    }
+
+    const videoId = uniqueId();
     onMessageAdd({
-      id: uniqueId(),
+      id: videoId,
       isMine: false,
       type: "video",
       content: url,
     });
+    latestVideoId.current = videoId;
   }
 
   function onError(_: unknown, { id }: { id: string }) {
@@ -66,9 +78,7 @@ export default function Chat() {
   }
 
   useEffect(() => {
-    window.setTimeout(() => {
-      listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
-    }, 50);
+    listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
   }, [messages]);
 
   return (
@@ -107,7 +117,16 @@ export default function Chat() {
           }}
         >
           {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
+            <ChatMessage
+              key={message.id}
+              message={message}
+              shouldAutoPlay={message.id === latestVideoId.current}
+              onLoadedMetadata={() => {
+                listRef.current?.scrollTo({
+                  top: listRef.current.scrollHeight,
+                });
+              }}
+            />
           ))}
           {(textToSignMutation.isLoading || audioToSignMutation.isLoading) && (
             <BeatLoader size="12" style={{ alignSelf: "flex-end" }} />

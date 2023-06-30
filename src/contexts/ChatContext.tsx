@@ -8,6 +8,7 @@ export interface ChatMessageItem {
 }
 
 interface State {
+  latestVideoId?: string;
   messages: ChatMessageItem[];
 }
 
@@ -37,9 +38,13 @@ export const ChatContext = createContext<Context>({
 
 export default function ChatProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState(initialState.messages);
+  const [latestVideoId, setLatestVideoId] = useState<string>();
 
   const onMessageAdd = useCallback(
-    (message: ChatMessageItem) => setMessages((prev) => [...prev, message]),
+    (message: ChatMessageItem) => {
+      if (message.type === "video") setLatestVideoId(message.id);
+      setMessages((prev) => [...prev, message]);
+    },
     [setMessages]
   );
 
@@ -55,6 +60,7 @@ export default function ChatProvider({ children }: { children: ReactNode }) {
     <ChatContext.Provider
       value={{
         messages,
+        latestVideoId,
         onMessageAdd,
         onMessageDelete,
         onReset,

@@ -16,7 +16,7 @@ const audioToSign = (data: {
   const formData = new FormData();
   formData.append("audio", data.audio);
   formData.append("language", data.language);
-  return axiosInstance.post<null, { url: string }>("/audio-to-sign", formData);
+  return axiosInstance.post<null, { url: string, text: string }>("/audio-to-sign", formData);
 };
 
 const textSignApi = {
