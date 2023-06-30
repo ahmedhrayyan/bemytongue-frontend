@@ -18,7 +18,7 @@ export default function ChatMessage({
   return (
     <Box
       minW="8rem"
-      maxW="70%"
+      maxW={{ base: "92%", sm: "70%" }}
       px={{ base: 2.5, md: 3 }}
       py={{ base: 1, md: 2 }}
       bgColor={isMine ? "teal.500" : "gray.100"}

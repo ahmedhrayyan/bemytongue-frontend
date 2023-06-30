@@ -53,7 +53,7 @@ export default function AudioPlayer({ audio }: { audio: File | string }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <HStack flexDir="row-reverse" minW="20rem">
+    <HStack flexDir="row-reverse" minW={{base: "15rem", sm:"20rem"}}>
       <IconButton
         aria-label={isPlaying ? "Pause" : "Play"}
         me="-1"
