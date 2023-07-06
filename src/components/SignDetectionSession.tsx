@@ -2,11 +2,41 @@ import { Box, Button, HStack } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import useConfig from "../hooks/useConfig.ts";
 import rtcApi from "../api/rtcApi.ts";
+import { useMutation } from "@tanstack/react-query";
 
 export default function SignDetectionSession() {
   const { language } = useConfig();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const offerMutation = useMutation(
+    async () => {
+      setIsPlaying(true);
+      pcRef.current = await createPeerConnection();
+      let isMobile = false;
+      if (
+        navigator.userAgent.match(/Android/i) ||
+        navigator.userAgent.match(/webOS/i) ||
+        navigator.userAgent.match(/iPhone/i) ||
+        navigator.userAgent.match(/iPad/i) ||
+        navigator.userAgent.match(/iPod/i) ||
+        navigator.userAgent.match(/BlackBerry/i) ||
+        navigator.userAgent.match(/Windows Phone/i)
+      ) {
+        isMobile = true;
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: isMobile ? 1280 : 720,
+          height: isMobile ? 720 : 1280,
+          frameRate: 15,
+        },
+      });
+      stream
+        .getTracks()
+        .forEach((track) => pcRef.current?.addTrack(track, stream));
+      await negotiate();
+    },
+    { onError: stop }
+  );
   const videoRef = useRef<HTMLVideoElement>(null);
   const pcRef = useRef<RTCPeerConnection | null>(null);
 
@@ -63,35 +93,19 @@ export default function SignDetectionSession() {
     pcRef.current = null;
   }
 
-  async function start() {
-    setIsPlaying(true);
-    setIsLoading(true);
-    try {
-      pcRef.current = await createPeerConnection();
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720, frameRate: 15 },
-      });
-      stream
-        .getTracks()
-        .forEach((track) => pcRef.current?.addTrack(track, stream));
-      await negotiate();
-    } catch (err) {
-      stop();
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   return (
     <Box>
       <HStack justify="center">
-        <Button onClick={start} isDisabled={isPlaying} isLoading={isLoading}>
+        <Button
+          onClick={() => offerMutation.mutate()}
+          isDisabled={isPlaying}
+          isLoading={offerMutation.isLoading}
+        >
           جلسة جديدة
         </Button>
         <Button
           onClick={stop}
-          isDisabled={!isPlaying || isLoading}
+          isDisabled={!isPlaying || offerMutation.isLoading}
           colorScheme="red"
         >
           إنهاء الجلسة

@@ -23,7 +23,9 @@ export default function SignDetection() {
           الحالية.
         </Text>
       </Container>
-      <SignDetectionSession />
+      <Container maxW="container.md">
+        <SignDetectionSession />
+      </Container>
     </Page>
   );
 }
