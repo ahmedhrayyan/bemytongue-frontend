@@ -11,7 +11,7 @@ interface State {
 }
 
 let defaultLang = localStorage.getItem("language");
-if (defaultLang !== "ar" && defaultLang !== "en") defaultLang = "ar";
+if (defaultLang !== "ar" && defaultLang !== "en") defaultLang = "en";
 
 const initialState: State = {
   language: defaultLang as "en" | "ar",

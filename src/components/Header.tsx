@@ -1,17 +1,29 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
+  Button,
   Container,
   Flex,
   HStack,
   Link,
   Switch,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
+import { useRef } from "react";
 import { NavLink } from "react-router-dom";
 import useConfig from "../hooks/useConfig";
 
 export default function Header() {
   const { language, onLangToggle } = useConfig();
+  const confirmModal = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
   return (
     <Box as="header" bgColor="white" shadow="md" w="full" top="0">
       <Text
@@ -24,7 +36,11 @@ export default function Header() {
       >
         كن لساني
       </Text>
-      <Container display="flex" alignItems="center" justifyContent="space-between">
+      <Container
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <Flex gap="6" align="center">
           <Text
             display={{ base: "none", md: "block" }}
@@ -81,7 +97,10 @@ export default function Header() {
           </Text>
           <Switch
             isChecked={language === "ar"}
-            onChange={onLangToggle}
+            onChange={() => {
+              if (language === "ar") onLangToggle();
+              else confirmModal.onOpen();
+            }}
             sx={{
               ".chakra-switch__track": {
                 "--switch-bg": "var(--chakra-colors-teal-500)",
@@ -93,6 +112,44 @@ export default function Header() {
           </Text>
         </HStack>
       </Container>
+      <AlertDialog
+        isOpen={confirmModal.isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={confirmModal.onClose}
+        motionPreset="slideInBottom"
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent mx="2.5">
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              اختيار اللغة العربية
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              اللغة العربية مازالت تحت الطوير المستمر لذلك الكثير من المميزات
+              ليست متاحة بعد
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button
+                ref={cancelRef}
+                colorScheme="red"
+                onClick={confirmModal.onClose}
+                me="3"
+              >
+                إلغاء
+              </Button>
+              <Button
+                onClick={() => {
+                  onLangToggle();
+                  confirmModal.onClose();
+                }}
+              >
+                اتفهم ذلك
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 }
