@@ -148,7 +148,7 @@ export default function Chat() {
             <form onSubmit={onSubmit}>
               <HStack align="stretch">
                 <IconButton
-                  aria-label="test"
+                  aria-label="clear"
                   minW="12"
                   h="auto"
                   icon={<Trash />}
