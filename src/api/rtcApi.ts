@@ -4,7 +4,7 @@ async function submitOffer(data: {
   offer: RTCSessionDescriptionInit;
   language?: string;
 }) {
-  return axiosInstance.post<null, RTCSessionDescription>("/offer", data);
+  return axiosInstance.post<null, RTCSessionDescription>("/api/offer", data);
 }
 
 const rtcApi = {

@@ -5,7 +5,7 @@ const textToSign = (data: {
   language: "ar" | "en";
   text: string;
 }) => {
-  return axiosInstance.post<null, { url: string }>("/text-to-sign", data);
+  return axiosInstance.post<null, { path: string }>("/api/text-to-sign", data);
 };
 
 const audioToSign = (data: {
@@ -16,7 +16,7 @@ const audioToSign = (data: {
   const formData = new FormData();
   formData.append("language", data.language);
   formData.append("audio", data.audio);
-  return axiosInstance.post<null, { url: string, text: string }>("/audio-to-sign", formData);
+  return axiosInstance.post<null, { path: string, text: string }>("/api/audio-to-sign", formData);
 };
 
 const textSignApi = {

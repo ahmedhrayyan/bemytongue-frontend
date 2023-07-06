@@ -18,7 +18,7 @@ export default function Chat() {
   const [showRecorder, setShowRecorder] = useState(false);
   const { language } = useConfig();
   const { messages, onMessageAdd, onMessageDelete, onReset } = useChat();
-  function onSuccess({ url, text }: { url: string; text?: string }) {
+  function onSuccess({ path, text }: { path: string; text?: string }) {
     if (text) {
       onMessageAdd({
         id: uniqueId(),
@@ -29,11 +29,21 @@ export default function Chat() {
     }
 
     const videoId = uniqueId();
+
+    // Below I'm decrypting the path to get the real path
+
+    let pathInt = BigInt(path);
+    // add removed 1 from the real path
+    pathInt += 1n;
+    // convert to hex string
+    const realPath = pathInt.toString(16);
+    const fullUrl = `${import.meta.env.VITE_API_URL}/static/${realPath}.mp4`;
+
     onMessageAdd({
       id: videoId,
       isMine: false,
       type: "video",
-      content: url,
+      content: fullUrl,
     });
     latestVideoId.current = videoId;
   }
